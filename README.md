@@ -1,1 +1,1 @@
-# Foo-DynamicPlaylist-Server
+# Foo Dynamic Playlist - Server
