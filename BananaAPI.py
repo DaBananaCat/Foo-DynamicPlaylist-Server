@@ -1,13 +1,11 @@
 
 # Imports
-import json
+import ujson as json
 import os
 import requests
 import time
 import random
-
-# Techsmart names pretty print pp, rename it to pprint everywher else!
-import pprint as pp
+import geocoder
 
 """
 Part 1:
@@ -137,7 +135,8 @@ Part 5:
 Ect
 """
 
-def get_time(quantity="all"):
+
+def get_time(quantity="all"): 
     
     # Obtain time
     current_time = time.ctime(time.time()).split(" ")
@@ -171,16 +170,24 @@ def get_time(quantity="all"):
         return current_time[quantity]
     
         
-def get_weather(zip_code, data_return="current"):
+def get_weather(ip=True,zip_code=None, data_return="current"):
     
-    # Convert input to string if it isn't
-    if type(zip_code) == int:
-        zip_code = str(zip_code)
+    if zip_code:
+        # Convert input to string if it isn't
+        if type(zip_code) == int:
+            zip_code = str(zip_code)
+        
+        # Get latitude and longitude
+        result = request("https://api.zippopotam.us/us/" + zip_code)
+        lat = result["places"][0]["latitude"]
+        long = result["places"][0]["longitude"]
     
-    # Get latitude and longitude
-    result = request("https://api.zippopotam.us/us/" + zip_code)
-    lat = result["places"][0]["latitude"]
-    long = result["places"][0]["longitude"]
+    elif ip:
+        coords = geocoder.ip('me')
+        lat, long = str(coords.latlng[0]), str(coords.latlng[1]) 
+    
+    else:
+        raise Exception("No valid location data")
     
     # Get weather grid points
     # Weather grid points are what weather.gov uses to organize forecasts, think of it
@@ -216,8 +223,5 @@ if __name__ == "__main__":
     
     #print(get_weather())
 
-    result = ask("pick a number","9","5","3")
-    if result == 1:
-        print("you did the first one")
-    else:
-        print("you didn't pick the first one")
+
+    print(get_time(quantity="year"))
